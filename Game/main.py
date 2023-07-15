@@ -33,9 +33,16 @@ def create_turret(mouse_pos):
   #calculate the sequential number of the tile
   mouse_tile_num = (mouse_tile_y * c.COLS) + mouse_tile_x
   #check if that tile is grass
-  if world.tile_map[mouse_tile_num] == 7:  
-    turret = Turret(cursor_turret, mouse_tile_x, mouse_tile_y)
-    turret_group.add(turret)
+  if world.tile_map[mouse_tile_num] == 7:
+    #check that there isnt already a turret there
+    space_is_free = True
+    for turret in turret_group:
+      if (mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
+        space_is_free = False
+    #if it is a free space then create turret
+    if space_is_free == True:
+      new_turret = Turret(cursor_turret, mouse_tile_x, mouse_tile_y)
+      turret_group.add(new_turret)
 
 #create world
 world = World(world_data, map_image)
@@ -66,6 +73,7 @@ while run:
   #draw groups
   enemy_group.draw(screen)
   turret_group.draw(screen)
+
 
   #event handler
   for event in pg.event.get():
