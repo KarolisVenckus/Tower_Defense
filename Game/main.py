@@ -26,18 +26,12 @@ with open('Game/levels/level.tmj') as file:
 
 #create world
 world = World(world_data, map_image)
+world.process_data()
 
 #create groups
 enemy_group = pg.sprite.Group()
 
-waypoints = [
-  (100, 100),
-  (400, 200),
-  (400, 100),
-  (200, 300)
-]
-
-enemy = Enemy(waypoints, enemy_image)
+enemy = Enemy(world.waypoints, enemy_image)
 enemy_group.add(enemy)
 
 
@@ -51,9 +45,6 @@ while run:
 
   #draw level
   world.draw(screen)
-
-  #draw enemy path
-  pg.draw.lines(screen, "grey0", False, waypoints)
 
   #update groups
   enemy_group.update()
