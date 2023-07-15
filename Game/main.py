@@ -3,6 +3,7 @@ import json
 from enemy import Enemy
 from world import World
 from turret import Turret
+from button import Button
 import constants as c
 
 #initialise pygame
@@ -12,7 +13,7 @@ pg.init()
 clock = pg.time.Clock()
 
 #create game window
-screen = pg.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT))
+screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
 pg.display.set_caption("Tower Defence")
 
 #load images
@@ -22,6 +23,9 @@ map_image = pg.image.load('Game/levels/level.png').convert_alpha()
 cursor_turret = pg.image.load('Game/assets/images/turrets/cursor_turret.png').convert_alpha()
 #enemies
 enemy_image = pg.image.load('Game/assets/images/enemies/enemy_1.png').convert_alpha()
+#buttons
+buy_turret_image = pg.image.load('Game/assets/images/buttons/buy_turret.png').convert_alpha()
+cancel_image = pg.image.load('Game/assets/images/buttons/cancel.png').convert_alpha()
 
 #load json data for level
 with open('Game/levels/level.tmj') as file:
@@ -55,6 +59,9 @@ turret_group = pg.sprite.Group()
 enemy = Enemy(world.waypoints, enemy_image)
 enemy_group.add(enemy)
 
+#create buttons
+turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image)
+cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image)
 
 #game loop
 run = True
@@ -62,18 +69,33 @@ while run:
 
   clock.tick(c.FPS)
 
+  ########################
+  # UPDATING SECTION
+  ########################
+
+  #update groups
+  enemy_group.update()
+
+  ########################
+  # DRAWING SECTION
+  ########################
+
   screen.fill("grey100")
 
   #draw level
   world.draw(screen)
 
-  #update groups
-  enemy_group.update()
-
   #draw groups
   enemy_group.draw(screen)
   turret_group.draw(screen)
 
+  #draw buttons
+  #button for placing turrets
+  if turret_button.draw(screen):
+    print("new turret")
+
+  if cancel_button.draw(screen):
+    print("cancel")
 
   #event handler
   for event in pg.event.get():
