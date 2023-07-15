@@ -16,9 +16,14 @@ clock = pg.time.Clock()
 screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
 pg.display.set_caption("Tower Defence")
 
+#game variables
+placing_turrets = False
+
 #load images
 #map
 map_image = pg.image.load('Game/levels/level.png').convert_alpha()
+#turret spritesheets
+turret_sheet = pg.image.load('Game/assets/images/turrets/turret_1.png').convert_alpha()
 #individual turret for mouse cursor
 cursor_turret = pg.image.load('Game/assets/images/turrets/cursor_turret.png').convert_alpha()
 #enemies
@@ -45,7 +50,7 @@ def create_turret(mouse_pos):
         space_is_free = False
     #if it is a free space then create turret
     if space_is_free == True:
-      new_turret = Turret(cursor_turret, mouse_tile_x, mouse_tile_y)
+      new_turret = Turret(turret_sheet, mouse_tile_x, mouse_tile_y)
       turret_group.add(new_turret)
 
 #create world
@@ -60,8 +65,8 @@ enemy = Enemy(world.waypoints, enemy_image)
 enemy_group.add(enemy)
 
 #create buttons
-turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image)
-cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image)
+turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
+cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
 
 #game loop
 run = True
@@ -92,10 +97,17 @@ while run:
   #draw buttons
   #button for placing turrets
   if turret_button.draw(screen):
-    print("new turret")
-
-  if cancel_button.draw(screen):
-    print("cancel")
+    placing_turrets = True
+  #if placing turret then show the cancel button aswell
+  if placing_turrets == True:
+    #show cursor turret
+    cursor_rect = cursor_turret.get_rect()
+    cursor_pos = pg.mouse.get_pos()
+    cursor_rect.center = cursor_pos
+    if cursor_pos[0] <= c.SCREEN_WIDTH:
+      screen.blit(cursor_turret, cursor_rect)
+    if cancel_button.draw(screen):
+      placing_turrets = False
 
   #event handler
   for event in pg.event.get():
@@ -107,7 +119,8 @@ while run:
       mouse_pos = pg.mouse.get_pos()
       #check if mouse is on the game area
       if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:
-        create_turret(mouse_pos)
+        if placing_turrets == True:
+          create_turret(mouse_pos)
 
 
   #update display
