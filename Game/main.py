@@ -17,6 +17,7 @@ screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
 pg.display.set_caption("Tower Defence")
 
 #game variables
+last_enemy_spawn = pg.time.get_ticks()
 placing_turrets = False
 selected_turret = None
 
@@ -31,7 +32,12 @@ for x in range(1, c.TURRET_LEVELS + 1):
 #individual turret for mouse cursor
 cursor_turret = pg.image.load('Game/assets/images/turrets/cursor_turret.png').convert_alpha()
 #enemies
-enemy_image = pg.image.load('Game/assets/images/enemies/enemy_1.png').convert_alpha()
+enemy_images = {
+  "weak": pg.image.load('Game/assets/images/enemies/enemy_1.png').convert_alpha(),
+  "medium": pg.image.load('Game/assets/images/enemies/enemy_2.png').convert_alpha(),
+  "strong": pg.image.load('Game/assets/images/enemies/enemy_3.png').convert_alpha(),
+  "elite": pg.image.load('Game/assets/images/enemies/enemy_4.png').convert_alpha()
+}
 #buttons
 buy_turret_image = pg.image.load('Game/assets/images/buttons/buy_turret.png').convert_alpha()
 cancel_image = pg.image.load('Game/assets/images/buttons/cancel.png').convert_alpha()
@@ -40,6 +46,15 @@ upgrade_turret_image = pg.image.load('Game/assets/images/buttons/upgrade_turret.
 #load json data for level
 with open('Game/levels/level.tmj') as file:
   world_data = json.load(file)
+
+#load fonts for displaying text on the screen
+text_font = pg.font.SysFont("Consolas", 24, bold = True)
+large_font = pg.font.SysFont("Consolas", 36)
+
+#function for outputing text onto the screen
+def draw_text(text, font, text_col, x, y):
+  img = font.render(text, True, text_col)
+  screen.blit(img, (x, y))
 
 def create_turret(mouse_pos):
   mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
@@ -74,13 +89,11 @@ def clear_selection():
 #create world
 world = World(world_data, map_image)
 world.process_data()
+world.process_enemies()
 
 #create groups
 enemy_group = pg.sprite.Group()
 turret_group = pg.sprite.Group()
-
-enemy = Enemy(world.waypoints, enemy_image)
-enemy_group.add(enemy)
 
 #create buttons
 turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
@@ -118,6 +131,18 @@ while run:
   enemy_group.draw(screen)
   for turret in turret_group:
     turret.draw(screen)
+
+  draw_text(str(world.health), text_font, "grey100", 0, 0)
+  draw_text(str(world.money), text_font, "grey100", 0, 30)
+
+  #spawn enemies
+  if pg.time.get_ticks() - last_enemy_spawn > c.SPAWN_COOLDOWN:
+    if world.spawned_enemies < len(world.enemy_list):
+      enemy_type = world.enemy_list[world.spawned_enemies]
+      enemy = Enemy(enemy_type, world.waypoints, enemy_images)
+      enemy_group.add(enemy)
+      world.spawned_enemies += 1
+      last_enemy_spawn = pg.time.get_ticks()
 
 
   #draw buttons
