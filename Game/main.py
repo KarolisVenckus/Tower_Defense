@@ -94,7 +94,7 @@ while run:
 
   #update groups
   enemy_group.update()
-  turret_group.update()
+  turret_group.update(enemy_group)
 
   #highlight selected turret
   if selected_turret:
