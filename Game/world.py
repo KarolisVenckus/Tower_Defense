@@ -15,6 +15,8 @@ class World():
         self.image = map_image
         self.enemy_list = []
         self.spawned_enemies = 0
+        self.killed_enemies = 0
+        self.missed_enemies = 0
 
     def process_data(self):
         #look through data to extract relevant info
@@ -41,6 +43,18 @@ class World():
                 self.enemy_list.append(enemy_type)
         #now randomize list to shuffle enemies
         random.shuffle(self.enemy_list)
+
+    def check_level_complete(self):
+        if (self.killed_enemies + self.missed_enemies) == len(self.enemy_list):
+            return True
+
+    def reset_level(self):
+        #reset enemy variables
+        self.enemy_list = []
+        self.spawned_enemies = 0
+        self.killed_enemies = 0
+        self.missed_enemies = 0
+
 
     def draw(self, surface):
         surface.blit(self.image, (0, 0))
