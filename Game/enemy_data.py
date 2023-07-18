@@ -17,22 +17,22 @@ ENEMY_SPAWN_DATA = [
     #3
     "weak": 20,
     "medium": 5,
-    "strong": 0,
-    "elite": 0
+    "strong": 2,
+    "elite": 1
   },
   {
     #4
     "weak": 30,
-    "medium": 15,
-    "strong": 0,
-    "elite": 0
+    "medium": 10,
+    "strong": 3,
+    "elite": 2
   },
   {
     #5
     "weak": 5,
-    "medium": 20,
-    "strong": 0,
-    "elite": 0
+    "medium": 15,
+    "strong": 5,
+    "elite": 3
   },
   {
     #6
@@ -103,6 +103,13 @@ ENEMY_SPAWN_DATA = [
     "medium": 25,
     "strong": 25,
     "elite": 25
+  },
+  {
+    #16 VICTORY
+    "weak": 0,
+    "medium": 0,
+    "strong": 0,
+    "elite": 0
   }
 ]
 
@@ -116,11 +123,11 @@ ENEMY_DATA = {
     "speed": 3
   },
     "strong": {
-    "health": 20,
+    "health": 30,
     "speed": 4
   },
     "elite": {
-    "health": 30,
+    "health": 40,
     "speed": 6
   }
 }
